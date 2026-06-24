@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Absensi Halaqoh Santri</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="shell">
+    <div class="app">
+      <section class="screen active" id="login-screen">
+        <div class="login-layout">
+          <div class="panel login-panel">
+            <div class="auth-card">
+              <div class="logo-mark login-logo-mark">
+                <img class="mataqu-logo login-logo" src="logo mataqu .png" alt="Logo MataQu">
+                <div class="logo-copy">
+                  <strong>MataQu</strong>
+                  <p>Sistem absensi halaqoh santri</p>
+                </div>
+              </div>
+              <span class="eyebrow">Sistem Absensi Halaqoh Santri</span>
+              <h1>Masuk untuk membuka dashboard halaqoh.</h1>
+              <p class="lead auth-intro">
+                Kelola kehadiran santri, buka laporan, dan pantau aktivitas halaqoh dari satu akun.
+              </p>
+
+              <section class="auth-panel active" data-auth-view="login">
+                <form class="login-form auth-form" id="login-form">
+                  <div class="field">
+                    <label for="username">Nama Pengguna</label>
+                    <input id="username" name="username" type="text" placeholder="contoh: guruhalaqoh01" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+                  </div>
+
+                  <div class="field">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" placeholder="Masukkan password" autocomplete="current-password" required>
+                  </div>
+
+                  <button class="btn-primary auth-submit" type="submit">Masuk</button>
+                </form>
+
+                <div class="auth-link-row">
+                  <p class="helper auth-inline-note">Pembuatan akun baru dan reset kata sandi dikelola admin dari dashboard setelah login.</p>
+                </div>
+
+                <div class="message error hidden" id="login-error">Nama pengguna atau password tidak cocok.</div>
+                <div class="message success hidden" id="login-success"></div>
+              </section>
+            </div>
+          </div>
+
+          <div class="panel login-visual">
+            <span class="eyebrow">Fitur Aktif</span>
+            <h2 class="hero-title">Dashboard, laporan, diagram, kehadiran, dan kelola data santri halaqoh.</h2>
+            <figure class="halaqoh-hero">
+              <img src="gambar halaqoh .jpeg" alt="Kegiatan halaqoh santri">
+              <figcaption>Suasana halaqoh santri yang tertib, hangat, dan fokus dalam pembinaan.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="dashboard-screen">
+        <div class="dashboard-layout">
+          <aside class="panel sidebar">
+            <div class="brand-block">
+              <div class="logo-mark sidebar-logo-mark">
+                <img class="mataqu-logo sidebar-logo" src="logo mataqu .png" alt="Logo MataQu">
+                <div class="logo-copy">
+                  <strong>MataQu</strong>
+                  <p>Ma'had Ta'limul Qur'an</p>
+                </div>
+              </div>
+              <span class="eyebrow">Ma'had Ta'limul Qur'an</span>
+              <h2 class="brand-title">Panel Halaqoh Santri</h2>
+              <p>Kelola kehadiran halaqoh, pantau statistik santri, dan susun laporan dari satu tempat.</p>
+            </div>
+
+            <div class="user-chip">
+              <strong id="user-name">-</strong>
+              <p id="user-role">-</p>
+            </div>
+
+            <nav class="nav-list">
+              <button class="nav-button active" data-page="dashboard" type="button">Dashboard</button>
+              <button class="nav-button" data-page="laporan" type="button">Laporan</button>
+              <button class="nav-button" data-page="diagram" type="button">Diagram</button>
+              <button class="nav-button" data-page="kehadiran" type="button">Kehadiran</button>
+            </nav>
+
+            <div class="card compact-card">
+              <h3 class="compact-title">Akun Pengelola</h3>
+              <div class="account-filter-bar" id="account-filter-bar">
+                <button class="account-filter-pill active" type="button" data-filter="all">Semua</button>
+                <button class="account-filter-pill" type="button" data-filter="active">Aktif</button>
+                <button class="account-filter-pill" type="button" data-filter="inactive">Nonaktif</button>
+              </div>
+              <div class="account-list" id="account-list"></div>
+            </div>
+
+            <button class="btn-secondary" type="button" id="logout-btn">Keluar</button>
+          </aside>
+
+          <main class="content">
+            <header class="panel topbar">
+              <div>
+                <span class="eyebrow">Ringkasan Hari Ini</span>
+                <h2 class="page-title">Kehadiran halaqoh santri</h2>
+                <p class="small-note" id="dashboard-date"></p>
+              </div>
+              <div class="status-pill" id="dashboard-summary">0 dari 0 santri tercatat hadir hari ini.</div>
+            </header>
+
+            <section class="page active" id="page-dashboard">
+              <div class="stats-grid">
+                <article class="card metric">
+                  <span>Total Santri</span>
+                  <strong id="metric-total-employees">0</strong>
+                  <p class="trend">Data sinkron dari database MySQL</p>
+                </article>
+                <article class="card metric">
+                  <span>Hadir Hari Ini</span>
+                  <strong id="metric-present">0</strong>
+                  <p class="trend">Santri yang hadir pada sesi hari ini</p>
+                </article>
+                <article class="card metric">
+                  <span>Izin / Berhalangan</span>
+                  <strong id="metric-leave">0</strong>
+                  <p class="muted">Izin resmi hari ini</p>
+                </article>
+                <article class="card metric">
+                  <span>Terlambat</span>
+                  <strong id="metric-late">0</strong>
+                  <p class="muted">Butuh tindak lanjut</p>
+                </article>
+              </div>
+
+              <article class="card admin-tools-card hidden" id="admin-tools-card">
+                <div class="section-title">
+                  <div>
+                    <h3>Kelola Akun Admin</h3>
+                    <p class="section-subtitle">Area ini hanya untuk admin membuat akun guru baru dan mereset kata sandi akun pengelola.</p>
+                  </div>
+                  <span class="badge success">Admin Only</span>
+                </div>
+
+                <div class="split-grid admin-tools-grid">
+                  <div class="admin-tool-panel">
+                    <h4>Buat Akun Guru</h4>
+                    <p class="helper">Akun baru akan dibuat dengan peran Guru Halaqoh.</p>
+                    <form class="form-grid" id="admin-account-form">
+                      <div class="field">
+                        <label for="admin-account-name">Nama lengkap</label>
+                        <input id="admin-account-name" type="text" placeholder="Nama pengelola baru" required>
+                      </div>
+                      <div class="field">
+                        <label for="admin-account-username">Nama Pengguna</label>
+                        <input id="admin-account-username" type="text" placeholder="contoh: guruhalaqohbaru" required>
+                      </div>
+                      <div class="field">
+                        <label for="admin-account-password">Password awal</label>
+                        <input id="admin-account-password" type="password" placeholder="Minimal 6 karakter" required>
+                      </div>
+                      <div class="field">
+                        <label for="admin-account-password-confirm">Ulangi password awal</label>
+                        <input id="admin-account-password-confirm" type="password" placeholder="Ulangi password awal" required>
+                      </div>
+                      <div class="actions">
+                        <button class="btn-primary" type="submit">Buat akun guru</button>
+                      </div>
+                    </form>
+                    <div class="message hidden" id="admin-account-message"></div>
+                  </div>
+
+                  <div class="admin-tool-panel">
+                    <h4>Reset Kata Sandi Akun</h4>
+                    <p class="helper">Admin dapat mereset kata sandi akun pengelola lain tanpa membuka jalur reset publik.</p>
+                    <form class="form-grid" id="admin-reset-form">
+                      <div class="field">
+                        <label for="admin-reset-username">Nama Pengguna</label>
+                        <input id="admin-reset-username" type="text" placeholder="contoh: guruhalaqoh01" required>
+                      </div>
+                      <div class="field">
+                        <label for="admin-reset-password">Password baru</label>
+                        <input id="admin-reset-password" type="password" placeholder="Minimal 6 karakter" required>
+                      </div>
+                      <div class="field">
+                        <label for="admin-reset-password-confirm">Ulangi password baru</label>
+                        <input id="admin-reset-password-confirm" type="password" placeholder="Ulangi password baru" required>
+                      </div>
+                      <div class="actions">
+                        <button class="btn-primary" type="submit">Reset password akun</button>
+                      </div>
+                    </form>
+                    <div class="message hidden" id="admin-reset-message"></div>
+                  </div>
+
+                  <div class="admin-tool-panel" id="admin-edit-panel">
+                    <h4>Edit Akun Guru</h4>
+                    <p class="helper" id="admin-edit-hint">Pilih akun guru dari daftar lalu klik <strong>Edit akun</strong> untuk mengisi formulir ini.</p>
+                    <form class="form-grid" id="admin-edit-form">
+                      <input type="hidden" id="admin-edit-id">
+                      <div class="field">
+                        <label for="admin-edit-name">Nama lengkap</label>
+                        <input id="admin-edit-name" type="text" placeholder="Nama lengkap guru" required>
+                      </div>
+                      <div class="field">
+                        <label for="admin-edit-username">Nama Pengguna</label>
+                        <input id="admin-edit-username" type="text" placeholder="contoh: guruhalaqoh02" required>
+                      </div>
+                      <div class="actions">
+                        <button class="btn-primary" type="submit">Simpan perubahan</button>
+                        <button class="btn-ghost" type="button" id="admin-edit-cancel">Batal</button>
+                      </div>
+                    </form>
+                    <div class="message hidden" id="admin-edit-message"></div>
+                  </div>
+                </div>
+              </article>
+
+              <div class="cards-grid">
+                <article class="card dashboard-chart-card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Aktivitas Pengelola</h3>
+                      <p class="section-subtitle">Catatan pemantauan yang diperbarui dari database aplikasi.</p>
+                    </div>
+                  </div>
+                  <div class="activity-list" id="activity-list"></div>
+                </article>
+
+                <article class="card dashboard-report-card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Kehadiran Terkini</h3>
+                      <p class="section-subtitle">Lima update kehadiran terbaru untuk hari ini.</p>
+                    </div>
+                  </div>
+                  <div class="activity-list" id="recent-presence-list"></div>
+                </article>
+              </div>
+
+              <div class="cards-grid">
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Diagram Kehadiran Santri</h3>
+                      <p class="section-subtitle">Ringkasan komposisi kehadiran santri langsung dari dashboard.</p>
+                    </div>
+                  </div>
+                  <div class="dashboard-diagram-grid">
+                    <div>
+                      <div class="mini-donut" id="dashboard-donut-chart" data-center="0%" aria-hidden="true"></div>
+                      <div class="legend" id="dashboard-donut-legend"></div>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Laporan Siap Kirim</h3>
+                      <p class="section-subtitle">Siapkan laporan per santri untuk file unduhan atau file yang akan dilampirkan ke WhatsApp wali santri.</p>
+                    </div>
+                  </div>
+                  <div class="stack report-stack">
+                    <div class="field">
+                      <label for="report-student">Pilih santri</label>
+                      <select id="report-student"></select>
+                    </div>
+                    <div class="field">
+                      <label for="report-period">Periode laporan</label>
+                      <select id="report-period">
+                        <option value="weekly">Mingguan</option>
+                        <option value="monthly">Bulanan</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="report-reference-date">Tanggal acuan</label>
+                      <input id="report-reference-date" type="date">
+                    </div>
+                    <div class="field">
+                      <label for="report-father-name">Nama ayah</label>
+                      <input id="report-father-name" type="text" placeholder="Contoh: Bapak Ahmad Fauzi">
+                    </div>
+                    <div class="field">
+                      <label for="report-mother-name">Nama ibu</label>
+                      <input id="report-mother-name" type="text" placeholder="Contoh: Ibu Siti Rahmah">
+                    </div>
+                    <div class="field">
+                      <label for="report-letter-number">Nomor surat</label>
+                      <input id="report-letter-number" type="text" placeholder="Otomatis dibuat bila dikosongkan">
+                    </div>
+                    <div class="field">
+                      <label for="report-preview">Preview laporan santri</label>
+                      <div class="report-preview-frame-wrap">
+                        <iframe id="report-preview" class="report-preview-frame" title="Preview laporan santri"></iframe>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label for="whatsapp-number">Nomor WhatsApp tujuan</label>
+                      <div class="phone-input">
+                        <span class="phone-prefix">+62</span>
+                        <input id="whatsapp-number" type="text" inputmode="numeric" placeholder="81234567890" aria-label="Nomor WhatsApp tanpa kode negara">
+                      </div>
+                    </div>
+                    <div class="export-actions">
+                      <button class="btn-primary" type="button" id="download-report-doc">Unduh DOC</button>
+                      <button class="btn-secondary" type="button" id="print-report-pdf">Unduh PDF</button>
+                      <button class="btn-ghost" type="button" id="send-whatsapp-mobile">Bagikan PDF ke WhatsApp</button>
+                      <button class="btn-ghost" type="button" id="send-whatsapp-web">Buka WhatsApp Web</button>
+                    </div>
+                    <p class="small-note whatsapp-share-note" id="whatsapp-share-note"></p>
+                    <div class="helper">
+                      Laporan memakai format resmi dengan header ma'had, rekap kehadiran, diagram mingguan, dan tanda tangan musyrif. Dokumen bisa diunduh sebagai `.doc`, diunduh sebagai PDF, atau dibagikan sebagai file PDF ke WhatsApp wali santri.
+                    </div>
+                    <div class="message success hidden" id="whatsapp-message">File laporan siap dikirim melalui WhatsApp.</div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="page" id="page-laporan">
+              <div class="cards-grid">
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Laporan Tersimpan</h3>
+                      <p class="section-subtitle">Semua request laporan yang tersimpan di aplikasi.</p>
+                    </div>
+                  </div>
+                  <div class="report-list" id="report-list"></div>
+                </article>
+
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Export Data</h3>
+                      <p class="section-subtitle">Unduh data kehadiran dan santri untuk dibagikan.</p>
+                    </div>
+                  </div>
+                  <p class="muted">Gunakan ekspor CSV untuk spreadsheet dan JSON untuk backup data sistem.</p>
+                  <div class="export-actions section-offset-sm">
+                    <button class="btn-primary" type="button" id="export-csv">Export CSV</button>
+                    <button class="btn-ghost" type="button" id="export-json">Export JSON</button>
+                  </div>
+                  <div class="helper section-offset-sm">
+                    Data yang diekspor mencakup santri, kehadiran, dan daftar laporan yang sudah disimpan.
+                  </div>
+                </article>
+              </div>
+
+              <article class="card">
+                <div class="section-title">
+                  <div>
+                    <h3>Buat Laporan Cepat</h3>
+                    <p class="section-subtitle">Simpan request laporan baru ke sistem.</p>
+                  </div>
+                </div>
+                <form class="form-grid two-col" id="report-form">
+                  <div class="field">
+                    <label for="report-title">Judul laporan</label>
+                    <input id="report-title" type="text" placeholder="Contoh: Rekap kehadiran halaqoh April">
+                  </div>
+                  <div class="field">
+                    <label for="report-type">Jenis laporan</label>
+                    <select id="report-type">
+                      <option>PDF</option>
+                      <option>XLS</option>
+                      <option>DOC</option>
+                      <option>Bulanan</option>
+                    </select>
+                  </div>
+                  <div class="field span-full">
+                    <label for="report-note">Catatan</label>
+                    <textarea id="report-note" rows="4" placeholder="Tuliskan kebutuhan laporan..."></textarea>
+                  </div>
+                  <div class="actions">
+                    <button class="btn-primary" type="submit">Simpan Request</button>
+                  </div>
+                </form>
+                <div class="message success hidden" id="report-message">Permintaan laporan tersimpan.</div>
+              </article>
+            </section>
+
+            <section class="page" id="page-diagram">
+              <div class="cards-grid">
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Tren Kehadiran Bulanan</h3>
+                      <p class="section-subtitle">Persentase hadir dari data tersimpan.</p>
+                    </div>
+                  </div>
+                  <div class="bars" id="monthly-bars" aria-label="Diagram batang kehadiran bulanan"></div>
+                </article>
+
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Komposisi Status Hari Ini</h3>
+                      <p class="section-subtitle">Perbandingan hadir, izin, berhalangan, dan terlambat.</p>
+                    </div>
+                  </div>
+                  <div class="donut" id="donut-chart" data-center="0%" aria-hidden="true"></div>
+                  <div class="legend" id="donut-legend"></div>
+                </article>
+              </div>
+            </section>
+
+            <section class="page" id="page-kehadiran">
+              <div class="employee-stats">
+                <article class="card metric">
+                  <span>Check-in tercepat</span>
+                  <strong id="employee-fastest">-</strong>
+                  <p class="muted">Diambil dari absensi hari ini</p>
+                </article>
+                <article class="card metric">
+                  <span>Santri sakit</span>
+                  <strong id="employee-wfh">0</strong>
+                  <p class="muted">Santri yang tidak hadir karena sakit</p>
+                </article>
+                <article class="card metric">
+                  <span>Perlu tindak lanjut</span>
+                  <strong id="employee-follow-up">0</strong>
+                  <p class="muted">Santri yang belum tercatat atau terlambat</p>
+                </article>
+              </div>
+
+              <div class="split-grid">
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Tambah Santri</h3>
+                      <p class="section-subtitle">Masukkan atau perbarui data santri yang tersimpan di database aplikasi.</p>
+                    </div>
+                    <span class="badge success"><span id="employee-count">0</span> santri</span>
+                  </div>
+                  <form class="form-grid" id="employee-form">
+                    <div class="field">
+                      <label for="employee-name">Nama santri</label>
+                      <input id="employee-name" type="text" placeholder="Contoh: Tia Andini" required>
+                    </div>
+                    <div class="field">
+                      <label for="employee-division">Halaqoh / Kelas</label>
+                      <input id="employee-division" type="text" placeholder="Contoh: Halaqoh Tahsin Akhwat" required>
+                    </div>
+                    <div class="field">
+                      <label for="employee-role">Jabatan</label>
+                      <input id="employee-role" type="text" placeholder="Contoh: Team Lead" required>
+                    </div>
+                    <div class="actions">
+                      <button class="btn-primary" type="submit" id="employee-submit-button">Tambah Santri</button>
+                      <button class="btn-ghost hidden" type="button" id="employee-cancel-button">Batal Edit</button>
+                    </div>
+                  </form>
+                  <div class="message success hidden" id="employee-message">Santri berhasil ditambahkan.</div>
+                </article>
+
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Daftar Santri</h3>
+                      <p class="section-subtitle">Pilih santri untuk diedit atau dihapus langsung dari aplikasi.</p>
+                    </div>
+                  </div>
+                  <div class="employee-list" id="employee-list"></div>
+                </article>
+
+                <article class="card">
+                  <div class="section-title">
+                    <div>
+                      <h3>Simpan Kehadiran</h3>
+                      <p class="section-subtitle">Tambahkan data kehadiran baru untuk santri terdaftar.</p>
+                    </div>
+                  </div>
+                  <form class="form-grid" id="attendance-form">
+                    <div class="field">
+                      <label for="attendance-employee">Santri</label>
+                      <select id="attendance-employee" required></select>
+                    </div>
+                    <div class="field">
+                      <label for="attendance-date">Tanggal</label>
+                      <input id="attendance-date" type="date" required>
+                    </div>
+                    <div class="field">
+                      <label for="attendance-time">Jam masuk</label>
+                      <input id="attendance-time" type="time">
+                    </div>
+                    <div class="field">
+                      <label for="attendance-status">Status</label>
+                      <select id="attendance-status">
+                        <option>Hadir</option>
+                        <option>Sakit</option>
+                        <option>Izin</option>
+                        <option>Terlambat</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="attendance-note">Keterangan</label>
+                      <textarea id="attendance-note" rows="3" placeholder="Catatan absensi..."></textarea>
+                    </div>
+                    <div class="actions">
+                      <button class="btn-primary" type="submit" id="attendance-submit-button">Simpan Kehadiran</button>
+                      <button class="btn-ghost hidden" type="button" id="attendance-cancel-button">Batal Edit</button>
+                    </div>
+                  </form>
+                  <div class="message success hidden" id="attendance-message">Data absensi berhasil disimpan.</div>
+                </article>
+              </div>
+
+              <article class="card">
+                <div class="section-title">
+                  <div>
+                    <h3>Data Kehadiran Santri</h3>
+                    <p class="section-subtitle">Tabel kehadiran yang otomatis terbarui saat data baru disimpan.</p>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nama</th>
+                        <th>Halaqoh / Kelas</th>
+                        <th>Tanggal</th>
+                        <th>Jam Masuk</th>
+                        <th>Status</th>
+                        <th>Keterangan</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attendance-body"></tbody>
+                  </table>
+                </div>
+              </article>
+            </section>
+          </main>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
