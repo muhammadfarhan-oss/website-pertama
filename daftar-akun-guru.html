@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Akun Guru - Sementara</title>
+  <style>
+    :root {
+      --bg: #f5f7f9;
+      --card: #ffffff;
+      --ink: #1f2a37;
+      --muted: #5b6777;
+      --line: #d8dee6;
+      --accent: #0f8a4a;
+      --warn-bg: #fff8e6;
+      --warn-line: #f2c76e;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      padding: 24px;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 22px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .meta {
+      margin-bottom: 16px;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 16px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f0f6f2;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 138, 74, 0.12);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .warning {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .footer {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .wrap {
+        border: none;
+        border-radius: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Daftar Akun Guru Halaqoh (Sementara)</h1>
+    <p>Digunakan untuk distribusi awal akses login ke sistem absensi.</p>
+
+    <div class="meta">Dibuat: 25 Juni 2026</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Nama Pengguna</th>
+          <th>Password Sementara</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ustadz Alfattah</td>
+          <td>ustadalfattah</td>
+          <td>Alfattah@2026</td>
+          <td><span class="badge">Aktif</span></td>
+        </tr>
+        <tr>
+          <td>Ustadz Mahyuddin</td>
+          <td>ustadmahyuddin</td>
+          <td>Mahyuddin@2026</td>
+          <td><span class="badge">Aktif</span></td>
+        </tr>
+        <tr>
+          <td>Ustadz Zakaria Rusli</td>
+          <td>ustadzakaria</td>
+          <td>Zakaria@2026</td>
+          <td><span class="badge">Aktif</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      Catatan penting: setiap guru disarankan segera mengganti password setelah login pertama.
+    </div>
+
+    <div class="footer">
+      Admin sistem: guruhalaqoh01
+    </div>
+  </main>
+</body>
+</html>
