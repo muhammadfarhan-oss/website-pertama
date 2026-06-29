@@ -866,7 +866,7 @@ function renderEmployeeList() {
   const canManageStudents = canManageProtectedData();
 
   [...state.employees]
-    .sort((left, right) => left.name.localeCompare(right.name))
+    .sort(compareEmployeesByGroup)
     .forEach((employee) => {
       const item = document.createElement("div");
       item.className = "employee-item";
@@ -1891,7 +1891,7 @@ function renderReportStudentOptions() {
   reportStudentSelect.innerHTML = "";
 
   [...state.employees]
-    .sort((left, right) => left.name.localeCompare(right.name))
+    .sort(compareEmployeesByGroup)
     .forEach((employee) => {
       const option = document.createElement("option");
       option.value = employee.id;
@@ -2079,13 +2079,22 @@ function renderAttendanceEmployeeOptions() {
   attendanceEmployeeSelect.innerHTML = '<option value="">Pilih santri</option>';
 
   [...state.employees]
-    .sort((left, right) => left.name.localeCompare(right.name))
+    .sort(compareEmployeesByGroup)
     .forEach((employee) => {
       const option = document.createElement("option");
       option.value = employee.id;
       option.textContent = `${employee.name} - ${employee.division}`;
       attendanceEmployeeSelect.appendChild(option);
     });
+}
+
+function compareEmployeesByGroup(left, right) {
+  const divisionCompare = left.division.localeCompare(right.division, "id-ID", { sensitivity: "base" });
+  if (divisionCompare !== 0) {
+    return divisionCompare;
+  }
+
+  return left.name.localeCompare(right.name, "id-ID", { sensitivity: "base" });
 }
 
 function renderDateText() {
