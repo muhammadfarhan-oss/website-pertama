@@ -130,6 +130,10 @@ function isCurrentUserAdmin() {
   return isAdminRole(currentUser?.role);
 }
 
+function canManageProtectedData() {
+  return isCurrentUserAdmin();
+}
+
 const loginScreen = document.getElementById("login-screen");
 const dashboardScreen = document.getElementById("dashboard-screen");
 const loginForm = document.getElementById("login-form");
@@ -833,6 +837,7 @@ function renderDashboard() {
 function renderReports() {
   reportList.innerHTML = "";
   const sortedReports = [...state.reports].sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+  const canManageReports = canManageProtectedData();
 
   sortedReports.forEach((report) => {
     const item = document.createElement("div");
@@ -844,7 +849,7 @@ function renderReports() {
       </div>
       <div class="item-actions">
         <span class="badge success">${report.type}</span>
-        <button class="btn-inline danger" type="button" data-action="delete-report" data-report-id="${report.id}">Hapus</button>
+        ${canManageReports ? `<button class="btn-inline danger" type="button" data-action="delete-report" data-report-id="${report.id}">Hapus</button>` : ""}
       </div>
     `;
     reportList.appendChild(item);
@@ -857,6 +862,7 @@ function renderEmployeeList() {
   }
 
   employeeList.innerHTML = "";
+  const canManageStudents = canManageProtectedData();
 
   [...state.employees]
     .sort((left, right) => left.name.localeCompare(right.name))
@@ -868,10 +874,10 @@ function renderEmployeeList() {
           <strong>${employee.name}</strong>
           <p class="report-meta">${employee.division} · ${employee.role}</p>
         </div>
-        <div class="item-actions">
+        ${canManageStudents ? `<div class="item-actions">
           <button class="btn-inline" type="button" data-action="edit-employee" data-employee-id="${employee.id}">Edit</button>
           <button class="btn-inline danger" type="button" data-action="delete-employee" data-employee-id="${employee.id}">Hapus</button>
-        </div>
+        </div>` : ""}
       `;
       employeeList.appendChild(item);
     });
@@ -2046,6 +2052,7 @@ function renderDonut() {
 function renderAttendanceTable() {
   attendanceTableBody.innerHTML = "";
   const mergedRecords = getMergedRecords();
+  const canManageAttendanceRecords = canManageProtectedData();
 
   mergedRecords.forEach((record) => {
     const row = document.createElement("tr");
@@ -2057,10 +2064,10 @@ function renderAttendanceTable() {
       <td><span class="status ${getStatusClass(record.status)}">${record.status}</span></td>
       <td>${record.note}</td>
       <td>
-        <div class="table-actions">
+        ${canManageAttendanceRecords ? `<div class="table-actions">
           <button class="btn-inline" type="button" data-action="edit-attendance" data-attendance-id="${record.id}">Edit</button>
           <button class="btn-inline danger" type="button" data-action="delete-attendance" data-attendance-id="${record.id}">Hapus</button>
-        </div>
+        </div>` : `<span class="report-meta">Terkunci</span>`}
       </td>
     `;
     attendanceTableBody.appendChild(row);
@@ -2108,7 +2115,23 @@ function renderAll() {
   renderAttendanceEmployeeOptions();
   renderDashboardReportPreview();
   renderWhatsappShareHint();
+  renderRoleAccess();
   ensureReportLogoReady();
+}
+
+function renderRoleAccess() {
+  const canManage = canManageProtectedData();
+
+  employeeForm?.closest(".card")?.classList.toggle("hidden", !canManage);
+  reportForm?.closest(".card")?.classList.toggle("hidden", !canManage);
+
+  if (!canManage && editingEmployeeId) {
+    resetEmployeeForm();
+  }
+
+  if (!canManage && editingAttendanceId) {
+    resetAttendanceForm();
+  }
 }
 
 function downloadFile(filename, content, type) {
@@ -2954,6 +2977,12 @@ window.addEventListener("pageshow", () => {
 
 reportForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  if (!canManageProtectedData()) {
+    setMessage(reportMessage, "error", "Hanya admin yang dapat menyimpan laporan.");
+    return;
+  }
+
   const title = document.getElementById("report-title").value.trim();
   const type = document.getElementById("report-type").value;
   const note = document.getElementById("report-note").value.trim() || "Tanpa catatan";
@@ -2989,6 +3018,12 @@ reportForm.addEventListener("submit", async (event) => {
 
 employeeForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  if (!canManageProtectedData()) {
+    setMessage(employeeMessage, "error", "Hanya admin yang dapat mengelola data santri.");
+    return;
+  }
+
   const name = employeeNameInput.value.trim();
   const division = employeeDivisionInput.value.trim();
   const role = employeeRoleInput.value.trim();
@@ -3034,6 +3069,11 @@ attendanceForm.addEventListener("submit", async (event) => {
 
   try {
     if (editingAttendanceId) {
+      if (!canManageProtectedData()) {
+        setMessage(attendanceMessage, "error", "Hanya admin yang dapat mengubah data absensi lama.");
+        return;
+      }
+
       const updatedAttendance = await updateBackendAttendance({ id: editingAttendanceId, employeeId, date, checkIn, status, note });
       state.attendance = state.attendance.map((record) => (record.id === editingAttendanceId ? updatedAttendance : record));
       attendanceMessage.textContent = "Data absensi berhasil diperbarui.";
@@ -3072,6 +3112,10 @@ employeeCancelButton?.addEventListener("click", resetEmployeeForm);
 attendanceCancelButton?.addEventListener("click", resetAttendanceForm);
 
 employeeList?.addEventListener("click", async (event) => {
+  if (!canManageProtectedData()) {
+    return;
+  }
+
   const actionButton = event.target.closest("button[data-action]");
 
   if (!actionButton) {
@@ -3115,6 +3159,10 @@ employeeList?.addEventListener("click", async (event) => {
 });
 
 attendanceTableBody?.addEventListener("click", async (event) => {
+  if (!canManageProtectedData()) {
+    return;
+  }
+
   const actionButton = event.target.closest("button[data-action]");
 
   if (!actionButton) {
@@ -3156,6 +3204,10 @@ attendanceTableBody?.addEventListener("click", async (event) => {
 });
 
 reportList?.addEventListener("click", async (event) => {
+  if (!canManageProtectedData()) {
+    return;
+  }
+
   const actionButton = event.target.closest("button[data-action]");
 
   if (!actionButton || actionButton.dataset.action !== "delete-report") {
