@@ -545,7 +545,7 @@ async function syncBackendData() {
     loadBackendReports()
   ]);
 
-  if ((!employees.length || !attendance.length || !reports.length) && isCurrentUserAdmin()) {
+  if (!employees.length && isCurrentUserAdmin()) {
     await bootstrapBackendData();
     [accounts, employees, attendance, reports] = await Promise.all([
       loadBackendAccounts(),
@@ -555,21 +555,10 @@ async function syncBackendData() {
     ]);
   }
 
-  if (accounts.length) {
-    state.accounts = accounts;
-  }
-
-  if (employees.length) {
-    state.employees = employees;
-  }
-
-  if (attendance.length) {
-    state.attendance = attendance;
-  }
-
-  if (reports.length) {
-    state.reports = reports;
-  }
+  state.accounts = accounts;
+  state.employees = employees;
+  state.attendance = attendance;
+  state.reports = reports;
 
   saveState();
 }

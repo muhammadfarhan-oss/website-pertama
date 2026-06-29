@@ -38,15 +38,17 @@ $reportsSeed = [
 $studentCount = (int) ($pdo->query('SELECT COUNT(*) AS total FROM students')->fetch()['total'] ?? 0);
 $attendanceCount = (int) ($pdo->query('SELECT COUNT(*) AS total FROM attendance')->fetch()['total'] ?? 0);
 $reportCount = (int) ($pdo->query('SELECT COUNT(*) AS total FROM reports')->fetch()['total'] ?? 0);
+$seededStudents = false;
 
 if ($studentCount === 0) {
     $insertStudentStmt = $pdo->prepare('INSERT INTO students (student_code, name, division, category) VALUES (?, ?, ?, ?)');
     foreach ($studentsSeed as $student) {
         $insertStudentStmt->execute([$student['student_code'], $student['name'], $student['division'], $student['category']]);
     }
+    $seededStudents = true;
 }
 
-if ($attendanceCount === 0) {
+if ($seededStudents && $attendanceCount === 0) {
     $studentMapStmt = $pdo->query('SELECT id, student_code FROM students');
     $studentMapRows = $studentMapStmt->fetchAll();
     $studentMap = [];
@@ -65,7 +67,7 @@ if ($attendanceCount === 0) {
     }
 }
 
-if ($reportCount === 0) {
+if ($seededStudents && $reportCount === 0) {
     $defaultStudentId = (int) ($pdo->query('SELECT id FROM students ORDER BY id ASC LIMIT 1')->fetch()['id'] ?? 0);
     $insertReportStmt = $pdo->prepare('INSERT INTO reports (student_id, title, report_format, note, period_type, reference_date, letter_number, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
     foreach ($reportsSeed as $report) {
