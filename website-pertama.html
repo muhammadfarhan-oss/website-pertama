@@ -220,6 +220,33 @@
                 </div>
               </article>
 
+              <article class="card account-security-card" id="account-security-card">
+                <div class="section-title">
+                  <div>
+                    <h3>Ganti Password</h3>
+                    <p class="section-subtitle">Perbarui password akun yang sedang login.</p>
+                  </div>
+                </div>
+                <form class="form-grid" id="change-password-form">
+                  <div class="field">
+                    <label for="change-current-password">Password lama</label>
+                    <input id="change-current-password" type="password" placeholder="Masukkan password lama" autocomplete="current-password" required>
+                  </div>
+                  <div class="field">
+                    <label for="change-new-password">Password baru</label>
+                    <input id="change-new-password" type="password" placeholder="Minimal 8 karakter" autocomplete="new-password" required>
+                  </div>
+                  <div class="field">
+                    <label for="change-new-password-confirm">Ulangi password baru</label>
+                    <input id="change-new-password-confirm" type="password" placeholder="Ulangi password baru" autocomplete="new-password" required>
+                  </div>
+                  <div class="actions">
+                    <button class="btn-primary" type="submit">Ganti password</button>
+                  </div>
+                </form>
+                <div class="message hidden" id="change-password-message"></div>
+              </article>
+
               <div class="cards-grid">
                 <article class="card dashboard-chart-card">
                   <div class="section-title">

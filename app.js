@@ -177,6 +177,11 @@ const adminEditUsernameInput = document.getElementById("admin-edit-username");
 const adminEditMessage = document.getElementById("admin-edit-message");
 const adminEditHint = document.getElementById("admin-edit-hint");
 const adminEditCancelButton = document.getElementById("admin-edit-cancel");
+const changePasswordForm = document.getElementById("change-password-form");
+const changeCurrentPasswordInput = document.getElementById("change-current-password");
+const changeNewPasswordInput = document.getElementById("change-new-password");
+const changeNewPasswordConfirmInput = document.getElementById("change-new-password-confirm");
+const changePasswordMessage = document.getElementById("change-password-message");
 const userName = document.getElementById("user-name");
 const userRole = document.getElementById("user-role");
 const navButtons = document.querySelectorAll(".nav-button");
@@ -597,6 +602,13 @@ async function editBackendAccount(payload) {
 
 async function resetBackendPassword(payload) {
   return authRequest("reset-password.php", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+async function changeBackendPassword(payload) {
+  return authRequest("change-password.php", {
     method: "POST",
     body: JSON.stringify(payload)
   });
@@ -2870,6 +2882,37 @@ adminEditForm?.addEventListener("submit", async (event) => {
     setMessage(adminAccountMessage, "success", `Akun ${result.updatedUser.username} berhasil diperbarui.`);
   } catch (error) {
     setMessage(adminEditMessage, "error", error.message || "Gagal memperbarui akun.");
+  }
+});
+
+changePasswordForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const currentPassword = changeCurrentPasswordInput.value.trim();
+  const newPassword = changeNewPasswordInput.value.trim();
+  const newPasswordConfirm = changeNewPasswordConfirmInput.value.trim();
+
+  if (!currentPassword || !newPassword) {
+    setMessage(changePasswordMessage, "error", "Password lama dan password baru wajib diisi.");
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    setMessage(changePasswordMessage, "error", "Password baru minimal 8 karakter.");
+    return;
+  }
+
+  if (newPassword !== newPasswordConfirm) {
+    setMessage(changePasswordMessage, "error", "Ulangi password baru dengan sama.");
+    return;
+  }
+
+  try {
+    await changeBackendPassword({ currentPassword, newPassword });
+    changePasswordForm.reset();
+    setMessage(changePasswordMessage, "success", "Password berhasil diganti. Gunakan password baru saat login berikutnya.");
+  } catch (error) {
+    setMessage(changePasswordMessage, "error", error.message || "Gagal mengganti password.");
   }
 });
 
