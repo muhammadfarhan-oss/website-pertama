@@ -684,6 +684,7 @@ async function initializeApplication() {
     setAuthView("login");
     showScreen(loginScreen);
     setMessage(loginError, "error", "Link GitHub Pages sudah bisa dibuka, tetapi login dan database masih membutuhkan backend PHP/MySQL di hosting. Untuk sementara gunakan localhost/XAMPP, atau pasang backend online lalu isi ABSENSI_API_BASE di config.js.");
+    loginError.dataset.persistent = "true";
     return;
   }
 
@@ -3015,6 +3016,10 @@ logoutButton.addEventListener("click", async () => {
 
 window.addEventListener("pageshow", () => {
   if (currentUser || !loginScreen.classList.contains("active")) {
+    return;
+  }
+
+  if (loginError?.dataset.persistent === "true") {
     return;
   }
 
