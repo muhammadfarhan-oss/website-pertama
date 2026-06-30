@@ -1,0 +1,1 @@
+window.ABSENSI_API_BASE = "";

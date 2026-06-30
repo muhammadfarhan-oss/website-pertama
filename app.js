@@ -1,6 +1,7 @@
 const STORAGE_KEY = "absensi-pro-v2";
 const APP_BASE = window.location.pathname.includes("/website-pertama") ? "/website-pertama" : "";
-const API_BASE = `${APP_BASE}/api`;
+const HOSTED_API_BASE = String(window.ABSENSI_API_BASE || "").replace(/\/$/, "");
+const API_BASE = HOSTED_API_BASE || `${APP_BASE}/api`;
 const AUTH_API_BASE = `${API_BASE}/auth`;
 
 const ACCOUNT_LABELS = {
@@ -371,8 +372,8 @@ function isLocalhostMode() {
   return host === "localhost" || host === "127.0.0.1";
 }
 
-function getPreferredAppUrl() {
-  return "http://localhost/website-pertama/";
+function hasBackendConnection() {
+  return isLocalhostMode() || Boolean(HOSTED_API_BASE);
 }
 
 function ensureHttpMode() {
@@ -380,8 +381,8 @@ function ensureHttpMode() {
     throw new Error("Aplikasi harus dibuka lewat http://localhost/website-pertama/ (bukan file langsung).");
   }
 
-  if (!isLocalhostMode()) {
-    throw new Error("Aplikasi lokal ini harus dibuka lewat http://localhost/website-pertama/.");
+  if (!hasBackendConnection()) {
+    throw new Error("Halaman online sudah terbuka, tetapi backend PHP/MySQL belum dipasang ke hosting. GitHub Pages hanya menjalankan tampilan, bukan API login dan database.");
   }
 }
 
@@ -670,14 +671,19 @@ async function deleteBackendReport(id) {
 }
 
 async function initializeApplication() {
-  if (isFileMode() || !isLocalhostMode()) {
+  if (isFileMode()) {
     clearAuthMessages();
     setAuthView("login");
     showScreen(loginScreen);
-    setMessage(loginError, "error", "Buka aplikasi lewat http://localhost/website-pertama/. Sedang diarahkan otomatis...");
-    window.setTimeout(() => {
-      window.location.href = getPreferredAppUrl();
-    }, 900);
+    setMessage(loginError, "error", "Buka aplikasi lewat http://localhost/website-pertama/ atau link hosting, bukan dari file HTML langsung.");
+    return;
+  }
+
+  if (!hasBackendConnection()) {
+    clearAuthMessages();
+    setAuthView("login");
+    showScreen(loginScreen);
+    setMessage(loginError, "error", "Link GitHub Pages sudah bisa dibuka, tetapi login dan database masih membutuhkan backend PHP/MySQL di hosting. Untuk sementara gunakan localhost/XAMPP, atau pasang backend online lalu isi ABSENSI_API_BASE di config.js.");
     return;
   }
 
