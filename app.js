@@ -372,8 +372,13 @@ function isLocalhostMode() {
   return host === "localhost" || host === "127.0.0.1";
 }
 
+function isStaticGithubPagesMode() {
+  const host = (window.location.hostname || "").toLowerCase();
+  return host.endsWith("github.io");
+}
+
 function hasBackendConnection() {
-  return isLocalhostMode() || Boolean(HOSTED_API_BASE);
+  return isLocalhostMode() || Boolean(HOSTED_API_BASE) || !isStaticGithubPagesMode();
 }
 
 function ensureHttpMode() {

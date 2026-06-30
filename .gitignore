@@ -1,3 +1,4 @@
 *.xlsx
 database-backups/*.sql
 deploy-package/
+tools/
